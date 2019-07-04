@@ -5,15 +5,32 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 
-//lista todas as pessoas
+
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, x-access-token')
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
+  //res.header('Access-Control-Allow-Credentials', true)
+  if ('OPTIONS' == req.method) {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
+
+//lista todas as pessoas OK
 app.get('/lista', function(req, res){
   console.log('Lista todas as pessoas');
   pessoas.findAll().then(pessoas => {
+    if(!pessoas){
+      return res.json({});
+    }
       res.json(pessoas);
   });
 });
 
-// Pega pessoa especifica a partir do ID
+// Pega pessoa especifica a partir do ID OK
 app.get('/encontrar/:id', function(req, res){
   console.log('Pessoa');
   pessoas.findByPk(req.params.id).then(pessoas => {
@@ -24,7 +41,7 @@ app.get('/encontrar/:id', function(req, res){
       res.json(pessoas);
   });
 });
-//deleta pessoa a partir de seu ID (deveria ser app.delete)
+//deleta pessoa a partir de seu ID (deveria ser app.delete) OK
 app.delete('/delete/:id', function(req, res){
   pessoas.destroy({
       where: { id: req.params.id } 
@@ -34,6 +51,7 @@ app.delete('/delete/:id', function(req, res){
 });
 //cadastrar pessoa
 app.post('/cadastro', function(req, res){
+  console.log('chegou no server');
   pessoas.create(req.body).then(pessoas => {
       console.log(pessoas.get({
         plain: true
