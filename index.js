@@ -19,8 +19,8 @@ app.use(function(req, res, next) {
 });
 
 
-//lista todas as pessoas OK
-app.get('/lista', function(req, res){
+//lista pessoas utilizando Promise
+/*app.get('/lista', function(req, res){
   console.log('Lista todas as pessoas');
   pessoas.findAll().then(pessoas => {
     if(!pessoas){
@@ -28,10 +28,18 @@ app.get('/lista', function(req, res){
     }
       res.json(pessoas);
   });
-});
-
-// Pega pessoa especifica a partir do ID OK
-app.get('/encontrar/:id', function(req, res){
+});*/
+//listar pessoas utilizando async await
+app.get('/lista', async (req, res, next) => {
+  try {
+    const pessoa = await pessoas.findAll()
+    res.json(pessoa);
+  } catch (e) {
+    next(e) 
+  }
+})
+// Buscar pessoa utilizando promise
+/*app.get('/encontrar/:id', function(req, res){
   console.log('Pessoa');
   pessoas.findByPk(req.params.id).then(pessoas => {
       console.log(pessoas);
@@ -40,17 +48,38 @@ app.get('/encontrar/:id', function(req, res){
       }
       res.json(pessoas);
   });
-});
-//deleta pessoa a partir de seu ID (deveria ser app.delete) OK
-app.delete('/delete/:id', function(req, res){
+});*/
+//Buscar pessoa utilizando async await
+app.get('/encontrar/:id', async (req, res, next) => {
+  try {
+    const pessoa = await pessoas.findByPk(req.params.id)
+    res.json(pessoa);
+  } catch (e) {
+    next(e) 
+  }
+})
+
+//deletar pessoa utilizando promise
+/*app.delete('/delete/:id', function(req, res){
   pessoas.destroy({
       where: { id: req.params.id } 
   }).then(result => {
       res.status(200).json(result);
   });
-});
-//cadastrar pessoa
-app.post('/cadastro', function(req, res){
+});*/
+//deletar pessoa utilizando async await
+app.get('/delete/:id', async (req, res, next) => {
+  try {
+    const pessoa = await pessoas.destroy({
+      where: { id: req.params.id } 
+  })
+    res.json(pessoa);
+  } catch (e) {
+    next(e) 
+  }
+})
+//cadastrar pessoa utilizando promise
+/*app.post('/cadastro', function(req, res){
   console.log('chegou no server');
   pessoas.create(req.body).then(pessoas => {
       console.log(pessoas.get({
@@ -58,15 +87,35 @@ app.post('/cadastro', function(req, res){
       }));
       res.send(pessoas);
   });
-}); 
-//atualizar dados de uma pessoa a partir de seu id
-app.put('/update/:id', function(req, res){
+}); */
+//cadastrar pessoa utilizando async await
+app.get('/cadastro', async (req, res, next) => {
+  try {
+    const pessoa = await pessoas.create(req.body)
+    res.json(pessoa);
+  } catch (e) {
+    next(e) 
+  }
+})
+//atualizar pessoa utilizando promise
+/*app.put('/update/:id', function(req, res){
   pessoas.update(req.body,{ 
       where: { id: req.params.id } 
   }).then(result => {
       res.status(200).json(result);
   });
-});
+});*/
+//atualizar pessoa utilizando async await
+app.get('/update/:id', async (req, res, next) => {
+  try {
+    const pessoa = await pessoas.update(req.body,{ 
+      where: { id: req.params.id } 
+  })
+    res.json(pessoa);
+  } catch (e) {
+    next(e) 
+  }
+})
 
 app.listen(3000);
 
